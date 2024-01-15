@@ -47,19 +47,15 @@ def create_dataset(csv_path, batch_size=64):
     return train_dataset, val_dataset
 
 # Define the model using TensorFlow/Keras
-class TitanicSurvivalModel(tf.keras.Model):
-    def __init__(self):
-        super(TitanicSurvivalModel, self).__init__()
-        # Define layers
-        self.fc1 = tf.keras.layers.Dense(14, activation='relu', input_shape=(10,))
-        self.fc3 = tf.keras.layers.Dense(7, activation='relu')
-        self.output_layer = tf.keras.layers.Dense(2, activation='softmax')
+def create_model():
+    model = tf.keras.Sequential([
+        tf.keras.layers.Dense(14, activation='relu', input_shape=(10,)),
+        tf.keras.layers.Dense(7, activation='relu'),
+        tf.keras.layers.Dense(2)  # Binary classification (Survived or Not Survived)
+    ])
 
-    def call(self, inputs):
-        x = self.fc1(inputs)
-        x = self.fc3(x)
-        x = self.output_layer(x)
-        return x
+    model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+    return model
 
 # Function to train the model
 def train(model, train_data, val_data, epochs=500, batch_size=64):
@@ -94,7 +90,7 @@ def train(model, train_data, val_data, epochs=500, batch_size=64):
 if __name__ == "__main__":
     train_data, val_data = create_dataset('train.csv')
     
-    model = TitanicSurvivalModel()
+    model = create_model()
     
     train(model, train_data, val_data)
     
